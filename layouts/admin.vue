@@ -68,6 +68,7 @@ body {
 }
 .main-content{
    
+    width:100%;
    /*  position:absolute;
     width:100%;
     top:0;

@@ -52,7 +52,7 @@ app.post('/api/read/card',urlencodedParser, function (req, res) {
     
   
 })
-// POST /api/logout to log out the user and remove it from the req.session
+
 app.post('/logout', function (req, res) {
   delete req.session.authUser
   res.redirect('/');
