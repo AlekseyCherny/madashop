@@ -1,0 +1,16 @@
+.mycontainer {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+  }
+  .myheader {
+    grid-column: span 12;
+  }
+  .mynavigation-menu {
+    grid-column: span 3;
+  }
+  .mymain-content {
+    grid-column: span 9;
+  }
+  .myfooter {
+    grid-column: span 12;
+  }
