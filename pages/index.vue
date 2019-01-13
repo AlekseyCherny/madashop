@@ -14,7 +14,7 @@
 
       <b-card class="bgimage3" align="center" img-top text-variant="dark" title="Мир игрушек">
         <nuxt-link to="mada">
-          <b-card-img src="/images/mada2.png" alt="Image" top></b-card-img>
+          <b-card-img src="/images/Logo_madagascar.png" alt="Image" top></b-card-img>
         </nuxt-link>
         <h5 class="card-text">Описание 1</h5>
         <h5 class="card-text">Описание 2</h5>

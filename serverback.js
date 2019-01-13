@@ -4,6 +4,7 @@ const app = require('express')()
 var cors = require('cors')
 //const mongo= require('./app_server/models/db');
 var MongoClient = require('mongodb').MongoClient;
+var ObjectID = require('mongodb').ObjectID;
 var formidable = require('formidable');
 var cookieParser = require('cookie-parser');
 //var morgan = require('morgan');
@@ -48,9 +49,26 @@ app.post('/api/read/card',urlencodedParser, function (req, res) {
       if(err) return console.log(err);
       res.send(card)
   });
+})
+
+app.post('/api/write/order',urlencodedParser, function (req, res) {
+  var telephone = req.body.telephone;
+  var address = req.body.address;
+  var barcode = req.body.barcode;
+  var items = req.body.items;
+  console.log(telephone)
+  console.log(items)
+  res.send("Заказ получен !");
  
-    
-  
+})
+
+app.post('/api/read/cardbyphone',urlencodedParser, function (req, res) {
+  var telephone = req.body.telephone;
+  const collection = req.app.locals.collectioncard;
+  collection.findOne({tel:telephone},function(err, card){    
+      if(err) return console.log(err);
+      res.send(card||{})
+  });
 })
 
 app.post('/logout', function (req, res) {
@@ -82,6 +100,16 @@ app.post('/api/upload/cards', function (req, res) {
       var dataFromFile = fs.readFileSync(oldpath, 'utf8');
       dataFromFile = dataFromFile.trim(); 
       var objJSON = JSON.parse(dataFromFile);
+      const collection = req.app.locals.collectioncard;
+      for (i in objJSON) {
+        var key = { code : objJSON[i].code};
+        delete objJSON[i].code ;
+        collection.updateOne(key,{$set: objJSON[i]},{
+          upsert: true});
+       // upsertGoods(db,key,objJSON[i],function(){});
+        //console.log(JSON.stringify(key)+" - "+JSON.stringify(objJSON[i]));
+      } 
+
       //mongo.updateCards(objJSON);
       res.write('File uploaded  ');
       res.end();
@@ -97,19 +125,41 @@ app.post('/api/upload/goods', function (req, res) {
       dataFromFile = dataFromFile.trim(); 
       var objJSON = JSON.parse(dataFromFile);
       const collection = req.app.locals.collection;
-      //mongo.updateGoods(objJSON);
+      
+      for (i in objJSON) {
+        var key = { code : objJSON[i].code};
+        delete objJSON[i].code ;
+        collection.updateOne(key,{$set: objJSON[i]},{
+          upsert: true});
+       // upsertGoods(db,key,objJSON[i],function(){});
+        //console.log(JSON.stringify(key)+" - "+JSON.stringify(objJSON[i]));
+      } 
+
+     // mongo.updateGoods(objJSON);
       res.write('File uploaded  ');
       res.end();
     });
 })
-app.get('/api/goods', function (req, res) {
+app.get('/api/goods/:id', function (req, res) {
+  console.log("Мы получили"+req.params.id)
    const collection = req.app.locals.collection;
-    collection.find({}).limit(4).toArray(function(err, users){    
+    collection.find({}).limit(9).toArray(function(err, users){    
         if(err) return console.log(err);
         res.send(users)
     });
   });
        
+  app.post('/api/goods/list', urlencodedParser,function (req, res) {
+    var items_ids  = req.body.items_ids;
+    var obj_ids = items_ids.map(function(id) { return ObjectID(id); });
+    const collection = req.app.locals.collection;
+    console.log("COL "+items_ids)
+     collection.find({ _id : { $in : obj_ids} }).toArray(function(err, items){    
+         if(err) return console.log(err);
+         console.log("ITEMS "+JSON.stringify(items))
+         res.send(items)
+     });
+   });
 
 mongoClient.connect(function(err, client){
   if(err) return console.log(err);

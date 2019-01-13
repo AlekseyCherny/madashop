@@ -1,5 +1,5 @@
  <template>
-  <b-navbar toggleable="md" type="light" variant="white">
+  <b-navbar toggleable="md" type="dark"  class="mynav">
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
     
     <b-navbar-brand href="#">
@@ -15,19 +15,16 @@
     </b-navbar-brand>
 
     <b-collapse is-nav id="nav_collapse">
-      <!--  <b-navbar-nav>
+      <!--  <b-navbar-nav> variant="white"
       <b-nav-item href="#">Link</b-nav-item>
     </b-navbar-nav>
       -->
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <!-- <fa icon="dollar-sign"  style="font-size: 30px"/> -->
         <b-button
           id="cartbtn"
-          variant="outline-success"
-          data-target="modal"
+          variant="success"
           class="my-2 my-sm-0"
-          type="submit"
           v-b-modal="'modalcart'"
         >
           <fa icon="shopping-cart"/>
@@ -57,12 +54,8 @@
   </b-navbar>
 </template> 
 
-<script>
-export default {
-  methods: {
-    opencart: function() {
-      return this.$parent.opencart()
-    }
+<style >
+  .mynav {
+    background-color: brown;
   }
-}
-</script>
+</style>

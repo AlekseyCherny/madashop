@@ -1,202 +1,143 @@
 <template>
-  <section class="section centered_sec" >
-      <h2 class="title is-5"> Введите штрихкод карты </h2>
-     
-    <form id="quickorder" action="quickorder" method="post">  
-      <div class="field is-horizontal">
-         <div class="field-label is-normal">
-            <label class="label"></label>
-          </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="field has-addons">
-              
-              <p class="control is-expanded">
-                <input class="input" type="tel" placeholder="Номер карты (13 цифр)" name="barcode" v-model="barcode">
-              </p>
-              <p class="control">
-                <a class="button is-warning" v-on:click="findcart()">Найти</a>
-              </p>
-            </div>
-          </div>  
-          <div class="field">
-            <p class="control is-expanded has-icons-left">
-              <input class="input" type="text" placeholder="Ваше имя" name="name" v-model="name" >
-              <span class="icon is-small is-left">
-                <i class="fas fa-user"></i>
-              </span>
-            </p>
-          </div>
-          <div class="field">
-            <div class="field has-addons">
-              <p class="control">
-                <a class="button is-static">+7</a>
-              </p>
-              <p class="control is-expanded">
-                <input class="input" type="tel" placeholder="Ваш телефон" name="phone" v-model="phone">
-              </p>
-            </div>
-          </div>
-          <div class="field">
-            <div class="control">
-              <button class="button is-primary">Отправить</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-<div><br></div>
-    <form action method="post">
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">From</label>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <p class="control is-expanded has-icons-left">
-              <input class="input" type="text" placeholder="Name">
-              <span class="icon is-small is-left">
-                <i class="fas fa-user"></i>
-              </span>
-            </p>
-          </div>
-          <div class="field">
-            <p class="control is-expanded has-icons-left has-icons-right">
-              <input
-                class="input is-success"
-                type="email"
-                placeholder="Email"
-                value="alex@smith.com"
-              >
-              <span class="icon is-small is-left">
-                <i class="fas fa-envelope"></i>
-              </span>
-              <span class="icon is-small is-right">
-                <i class="fas fa-check"></i>
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="field is-horizontal">
-        <div class="field-label"></div>
-        <div class="field-body">
-          <div class="field is-expanded">
-            <div class="field has-addons">
-              <p class="control">
-                <a class="button is-static">+44</a>
-              </p>
-              <p class="control is-expanded">
-                <input class="input" type="tel" placeholder="Your phone number">
-              </p>
-            </div>
-            <p class="help">Do not enter the first zero</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">Department</label>
-        </div>
-        <div class="field-body">
-          <div class="field is-narrow">
-            <div class="control">
-              <div class="select is-fullwidth">
-                <select>
-                  <option>Business development</option>
-                  <option>Marketing</option>
-                  <option>Sales</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="field is-horizontal">
-        <div class="field-label">
-          <label class="label">Already a member?</label>
-        </div>
-        <div class="field-body">
-          <div class="field is-narrow">
-            <div class="control">
-              <label class="radio">
-                <input type="radio" name="member">
-                Yes
-              </label>
-              <label class="radio">
-                <input type="radio" name="member">
-                No
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">Subject</label>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <input class="input is-danger" type="text" placeholder="e.g. Partnership opportunity">
-            </div>
-            <p class="help is-danger">This field is required</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">Question</label>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <textarea class="textarea" placeholder="Explain how we can help you"></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="field is-horizontal">
-        <div class="field-label">
-          <!-- Left empty for spacing -->
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-              <button class="button is-primary">Send message</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  </section>
+  <div>
+    <b-form @submit="checkForm" novalidate="novalidate" method="post">
+      <b-input-group prepend="+7" :state="state">
+        <b-form-input name="telephone" type="number" v-model="phone" :state="state" placeholder="10 цифр номера телефона"></b-form-input>
+        <b-form-input name="address" type="text" v-model="address" placeholder="Адрес доставки"></b-form-input>
+      </b-input-group>
+      <br>
+      <b-button variant="primary" @click="findcart">Применить скидку</b-button>
+      <b-button @click="checkForm" variant="success">Заказать</b-button>
+    </b-form>
+    <br>
+    <b-table striped bordered  hover :items="items" :fields="fields"></b-table>
+    <br>
+    <p>Итого {{totSum.toFixed(2)}}</p>
+    <p>Скидка {{totDisk.toFixed(2)}}</p>
+    <p>К Оплате {{totPay.toFixed(2)}}</p>
+  </div>
 </template>
 
 <script>
+const api_find_card_byphone = require('../assets/const.js').api_cards_byphone
+const api_write_order = require('../assets/const.js').api_write_order
+
 export default {
-    data:function () {
-     
-    return { barcode: '' , phone:'',name:''} //loadedgitems:false
-  }, 
-    methods: {
-        findcart: async function(){
-           const res = await this.$axios.post('/api/read/card',{barcode:this.barcode});
-           this.phone = res.data.tel;
-           this.name = res.data.name;
-           console.log(res.data);
-        }
+  data: function() {
+    return {
+      errors: [],
+      barcode: '',
+      phone: '',
+      address:'',
+      name: '',
+      novalidate: true,
+      cardPercent: 0,
+      totSum: 0,
+      totDisk: 0,
+      totPay: 0,
+      fields: [
+        { key: 'name', label: 'Наименование' },
+        { key: 'qty', label: 'К-во' },
+        { key: 'price', label: 'Цена' },
+        { key: 'sum', label: 'Сумма' },
+        { key: 'percent', label: '% ' },
+        { key: 'diskount', label: 'Скидка' },
+        { key: 'topay', label: 'К оплате' }
+      ]
+    }
+  },
+  computed: {
+    state() {
+      return this.validnumber(this.phone)
     },
+    items() {
+      return this.getCartItemsJSON(this.cardPercent)
+    }
+  },
+  methods: {
+    findcart: async function() {
+      if (this.validnumber()) {
+        const res = await this.$axios.post(api_find_card_byphone, {
+          telephone: '7' + this.phone
+        })
+        //this.phone = res.data.tel;
+        if (res.data.hasOwnProperty('name')) {
+          this.name = res.data.name
+          this.cardPercent = 3
+          console.log(res.data)
+        } else {
+          console.log('Не найдена карта по телефону')
+        }
+      } else {
+        alert('Не верный номер !')
+      }
+    },
+    checkForm: function(e) {
+      this.errors = []
+      if (!this.validnumber()) {
+        this.errors.push('Не верно указан номер телефона!')
+      }
+      if (this.errors.length) {
+        return false
+      }
+
+      this.$axios
+        .post(api_write_order, {
+          telephone: '7' + this.phone,
+          address: this.address,
+          barcode: this.barcode,
+          items: this.items
+        })
+        .then(function(response) {
+          console.log(response)
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    validnumber: function() {
+      var re = /^\d{10}$/
+      return re.test(this.phone)
+    },
+    getCartItemsJSON: function(card_percent) {
+      this.totSum = 0
+      this.totDisk = 0
+      this.totPay = 0
+      var items = []
+      for (var key in this.$store.state.glcarts) {
+        var it = this.$store.state.glcarts[key]
+        var mSum = Number(it[2]) * Number(it[1])
+        var mDiskGroup = it[4]
+        var mDiskount = 0
+        var mToPay = mSum
+        if (card_percent > 0) {
+          mDiskount = Math.round((mSum / 100) * card_percent * 100) / 100
+          mToPay = mSum - mDiskount
+        }
+        items.push({
+          код: it[3],
+          ценоваягруппа: mDiskGroup,
+          name: it[0],
+          price: it[1],
+          qty: it[2],
+          sum: mSum.toFixed(2),
+          percent: card_percent == 0 ? '' : card_percent,
+          diskount: mDiskount == 0 ? '' : mDiskount.toFixed(2),
+          topay: mToPay.toFixed(2)
+        })
+
+        this.totSum += mSum
+        this.totDisk += mDiskount
+        this.totPay += mToPay
+      }
+      return items
+    }
+  }
 }
 </script>
 
 <style >
-.centered_sec{
-    text-align: center;
+.centered_sec {
+  text-align: center;
 }
 </style>

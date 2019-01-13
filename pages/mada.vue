@@ -2,14 +2,26 @@
 
  
 <div>
-  <b-card-group deck>
-          <goods-card  v-for="item in gitems.slice(0, 4)" v-bind:goods="item" v-bind:key="item._id"  ></goods-card>
+  <b-pagination :total-rows="totalitems" v-model="currentPage" :per-page="10" :limit=10  v-on:change="onChange"/>
+
+  <b-card-group deck >
+          <goods-card  v-for="item in gitems.slice(startslice, startslice+5)" v-bind:goods="item" v-bind:key="item._id"  ></goods-card>
   </b-card-group>
+  
   <br> 
+  
+   <b-card-group deck >
+          <goods-card  v-for="item in gitems.slice(startslice+5, startslice+10)" v-bind:goods="item" v-bind:key="item._id"  ></goods-card>
+  </b-card-group> 
+  <br> 
+  <b-pagination :total-rows="totalitems" v-model="currentPage" :per-page="10" :limit=10  v-on:change="onChange"/>
+  
 <!-- <b-card-group deck>
           <goods-card  v-for="item in gitems.slice(2)" v-bind:goods="item" v-bind:key="item._id"  ></goods-card>
   </b-card-group>  -->
  </div>
+
+
 </template>
 
 
@@ -18,7 +30,7 @@
 import GoodsCard from  '../components/GoodsCard.vue';
 const axios = require('axios');
 
-const apiurl="http://localhost:3001/api/goods";
+const apiurl= require("../assets/const.js").api_goods_mada;
 export default {
   components: {
     GoodsCard,
@@ -26,12 +38,12 @@ export default {
   },
     data:function () {
      
-    return { gitems: {} } //loadedgitems:false
+    return { gitems: {} ,totalitems:0,startslice:0,currentPage:1} //loadedgitems:false
   }, 
     async asyncData ({ $axios }) {
-
-    const res = await $axios.get(apiurl)
-   return { gitems: res.data }
+    const testurl = apiurl+"343" 
+    const res = await $axios.get(testurl)
+   return { gitems: res.data , totalitems: res.data.length}
       
   },   
 
@@ -47,7 +59,17 @@ export default {
   }, */
 
   methods:{
-    addItem:function(good){
+     linkGen (pageNum) {
+      return apiurl + pageNum 
+    },
+    onChange (e){
+     console.log("Я нажал "+e)
+     // console.log("Page="+this.currentPage)
+     //return false;
+     this.startslice=(e-1)*10
+      
+    }
+    /* addItem:function(good){
      
        var cartData = JSON.parse(localStorage.getItem("cart")) || {};
 
@@ -63,7 +85,7 @@ export default {
      // this.cartitems = cartData; //JSON.parse(localStorage.getItem("cart")) || {} ;
       this.$store.commit('update',cartData); 
      
-    }
+    } */
   }
   }
  
@@ -76,6 +98,22 @@ export default {
 } 
 .links {
   padding-top: 15px;
+}
+.page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: rgb(75, 136, 78);
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+.page-item.active .page-link {
+    z-index: 1;
+    color: #fff;
+    background-color: rgb(75, 136, 78);
+    border-color: rgb(75, 136, 78);
 }
 </style>
 

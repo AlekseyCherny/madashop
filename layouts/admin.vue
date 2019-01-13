@@ -1,81 +1,49 @@
 <template>
-  <div >
-    <div class="row">
-      <div class="col-12 header">
-            <a href="">link1</a>
-            <a href="">link2</a>
-            <a href="">link3</a>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-2 navigation-menu">
-         
-
-<b-list-group>
-    <b-list-group-item  variant="secondary" >БЮДЖЕТ</b-list-group-item>
-  <b-list-group-item  to="mada" variant="info">Button item</b-list-group-item>
-  <b-list-group-item to="mada2"   variant="info">I am a button</b-list-group-item>
-  <b-list-group-item  to="#" variant="info">This is a button too</b-list-group-item>
-</b-list-group>
-<b-list-group>
-  <b-list-group-item  variant="secondary">ЗАРПЛАТА</b-list-group-item>
-  <b-list-group-item  to="#" variant="info">I am a button</b-list-group-item>
-  <b-list-group-item  to="#" variant="info">This is a button too</b-list-group-item>
-</b-list-group>
-      </div>
-
-      <div class="col-10 main-content">
-            <nuxt />
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12 footer">
-            FOOTER HERE
-      </div>
-    </div>
-  </div>
+<div class="container">
+  <no-ssr>
+  <nav-bar ref="navBar"></nav-bar>  
+  </no-ssr>
+  <cart  ref="shoppingCart"></cart> 
+  <div> <br></div>
+  <nuxt />
+</div>
 </template>
 
 <script>
+//v-bind:showcart="showcart"
+//import {bus} from '../plugins/bus.js'
+import cart from "@/components/Cart";
+import navbar from "@/components/Navbar";
+export default {
+
+  components: {
+    'nav-bar':navbar,
+    'cart': cart,
+  },
+   data: function () { 
+     this.$axios.setHeader('Access-Control-Allow-Origin','*' );
+    return {
+      // showcart: false, //видимость корзины
+     delme:true 
+    }
+  },
+  mounted (){
+    this.$root.$on('add-item-to-cart',(good) => {
+      return this.$refs.shoppingCart.addItem(good);
+   })
+  } 
+}
 
 </script>
 
 <style>
-body {
- max-width: 99vw;
-
+.columns .column h3 {
+  color: rgb(34, 0, 185);
 }
-.navigation-menu {
-  background-color:transparent;
-  /* position: absolute; */
- 
-   max-height: 95vh;
-    overflow: auto;
-    
-/*   overflow-y : scroll;
-  overflow-x : hidden; */
+.columns .column h4 {
+  color: rgb(201, 28, 28);
 }
-.header {
-  background-color: beige;
-  color:black;
-}
-.footer {
- /* position:absolute; */
-    /* z-index:100; */
-    bottom:0px;
-}
-.main-content{
-   
-    width:100%;
-   /*  position:absolute;
-    width:100%;
-    top:0;
-    bottom:0;
-    z-index:-1;
-    overflow:hidden;
-    background:rgb(248, 143, 143);
-    color:black; */
+.modal-card {
+  width: 800px;
 }
 </style>

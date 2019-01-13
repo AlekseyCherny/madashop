@@ -1,5 +1,6 @@
 <template>
-  <b-card v-bind:img-src="goods_src" align="center" img-alt="Img" img-top>
+
+  <b-card v-bind:img-src="goods_src" align="center" img-alt="Img" img-top style="max-width: 15rem;">
     <h4 slot="header" class="text-danger">{{goods.price}} р</h4>
     <p class="card-text">{{goods.name}}</p>
 
@@ -10,13 +11,15 @@
         v-on:click="addtocart(goods)"
         class="float-left"
       >{{storeitems.hasOwnProperty(this.goods._id) ? 'В корзине' : 'В корзину'}}</b-button>
-      <b-button disabled variant="light" class="float-right">{{goods.art}}</b-button>
+      <b-button disabled variant="light" class="float-right artikul">*****</b-button>
     </div>
   </b-card>
+
 </template>
 
 <script>
 //import { mapState } from 'vuex';
+//import {bus} from '../plugins/bus.js';
 
 export default {
   props: ['goods'],
@@ -35,14 +38,13 @@ export default {
       return this.storeitems.hasOwnProperty(this.goods._id)
         ? 'alreadybasket'
         : 'basket'
-      //return this.cartitems.hasOwnProperty(this.goods.id) ? 'alreadybasket' : 'basket';
-      //return this.inbasket ? 'alreadybasket' : 'basket';
     }
   },
 
   methods: {
     addtocart: function(good) {
-      this.$parent.addItem(good)
+       this.$root.$emit('add-item-to-cart', good);
+      return false;
     }
   }
 }
@@ -50,9 +52,10 @@ export default {
 
 <style>
 .column .card {
-  display: flex;
+  display: flex; 
   flex-direction: column;
   height: 100%;
+  
 }
 .card-footer {
   margin-top: auto;
@@ -81,5 +84,10 @@ export default {
 }
 .card-footer a:hover {
   color: white;
+}
+
+.artikul {
+  font-size: 0.9rem;
+  font-weight: 200;
 }
 </style>

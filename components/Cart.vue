@@ -1,5 +1,5 @@
 <template>
- <b-modal id="modalcart" size="lg" v-model="showcart"  title="Ваша корзина" header-bg-variant="warning" header-text-variant="danger" >
+ <b-modal id="modalcart" size="lg" v-model="showcart"  title="Цены на товары в корзине действительны до конца дня !" header-bg-variant="warning" header-text-variant="danger" >
   <b-container fluid> 
   
       <!-- HEADER ... -->
@@ -46,10 +46,33 @@
 </template>
 
 <script>
+const api_goods_list = require('../assets/const.js').api_goods_list
 export default {
-props: ["showcart"],
-mounted: function (){
-  this.$store.commit('update', JSON.parse(localStorage.getItem('cart')) || {} )
+data: function () { 
+    return {
+       showcart: false, //видимость корзины  
+    }
+  },
+mounted: async function (){
+   var now = new Date();
+   var cartObj = JSON.parse(localStorage.getItem('cart')) || {}
+   var items_ids = Object.keys(cartObj)
+   if (localStorage.cart_upd) {
+     var ObjUpdated = JSON.parse(localStorage.cart_upd)
+     if( items_ids.length>0 && ObjUpdated.d != now.getDate() || ObjUpdated.m != now.getMonth() || ObjUpdated.y != now.getFullYear()){
+         let data = (await this.$axios.post( api_goods_list, {items_ids: items_ids} )).data
+         data.forEach( function(item) { 
+            cartObj[item._id][1]=item.price
+          } );
+       localStorage.cart_upd=JSON.stringify({d:now.getDate(),m:now.getMonth(),y:now.getFullYear()})      
+     }
+      
+   }else{
+     localStorage.cart_upd=JSON.stringify({d:now.getDate(),m:now.getMonth(),y:now.getFullYear()})
+     localStorage.cart=JSON.stringify( {} )     
+   }
+    //update story
+    this.$store.commit('update', cartObj )
 },
 methods: {
    open_order: function(){
@@ -59,13 +82,11 @@ methods: {
       
     },
     closemodal: function(){
-      //this.$parent.closecart()
       this.showcart=false;
     },
     delete_item: function(key){
        var tmp =this.$store.state.glcarts;
        delete tmp[key]
-      // this.$delete(this.$store.state.glcarts,key)
       return this.updtateStoreStorage(tmp);
     },
     add_one: function(key){
@@ -84,23 +105,38 @@ methods: {
      addItem:function(good){
       var cartData = JSON.parse(localStorage.getItem("cart")) || {};
 
-      if (cartData.hasOwnProperty(good.id)) { // НЕ ВЫЗЫВАЕТСЯ СЕЙЧАС
+      if (cartData.hasOwnProperty(good._id)) { 
         // если такой товар уже в корзине, то добавляем +1 к его количеству
-        cartData[good._id][2] += 1;
+        return this.add_one(good._id);
       } else {
         // если товара в корзине еще нет, то добавляем в объект
-        cartData[good._id] = [good.name, good.price, 1];
+        cartData[good._id] = [good.name, good.price, 1,good.code, good.pricegroup];
       }
-      localStorage.setItem('cart', JSON.stringify(cartData));
+      return this.updtateStoreStorage(cartData);
+    //   localStorage.setItem('cart', JSON.stringify(cartData));
        
-     // this.cartitems = cartData; //JSON.parse(localStorage.getItem("cart")) || {} ;
-      this.$store.commit('update',cartData);
+    //  // this.cartitems = cartData; //JSON.parse(localStorage.getItem("cart")) || {} ;
+    //   this.$store.commit('update',cartData);
      
     },
     updtateStoreStorage:function(newObj){
-      localStorage.setItem('cart', JSON.stringify(newObj));
+      //localStorage.setItem('cart', JSON.stringify(newObj));
       this.$store.commit('update',newObj); 
       return false;
+    },
+    updateCartPrices:function(){
+       // var items_ids = Object.keys(this.$store.state.glcarts);
+        this.$axios
+        .post(api_goods_list, {
+          items_ids: Object.keys(JSON.parse(localStorage.getItem("cart")))
+         
+        })
+        .then(function(response) {
+          console.log(response)
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
     }
   }
  }
